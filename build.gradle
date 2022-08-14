@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'org.cadixdev.licenser' version '0.6.1'
+}
+
+group = 'dev.su5ed'
+version = '1.0.0'
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+
+license {
+    header file('NOTICE')
+    newLine false
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url 'https://maven.su5ed.dev/releases'
+            credentials {
+                username = System.env.MAVEN_USER ?: 'not'
+                password = System.env.MAVEN_PASSWORD ?: 'set'
+            }
+        }
+    }
+}

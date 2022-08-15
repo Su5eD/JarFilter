@@ -42,13 +42,21 @@ public class JarFilter {
         final File input = options.valueOf(inputOpt);
         final File output = options.valueOf(outputOpt);
         final List<String> filter = Arrays.asList(options.valueOf(filterOpt).split(","));
+
+        log("JarFilter: ");
+        log("  Input:    " + input);
+        log("  Output:   " + output);
+        log("  Filter:   " + filter);
         
         try(final ZipInputStream zis = new ZipInputStream(new FileInputStream(input));
             final ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(output))) {
             
             for (ZipEntry entry; (entry = zis.getNextEntry()) != null; ) {
                 final String name = entry.getName();
-                if (filter.stream().anyMatch(name::startsWith)) continue;
+                if (filter.stream().anyMatch(name::startsWith)) {
+                    log("Excluding: " + name);
+                    continue;
+                }
                 
                 zout.putNextEntry(entry);
                 copy(zis, zout);
@@ -64,5 +72,9 @@ public class JarFilter {
                 output.write(buffer, 0, n);
             }
         }
+    }
+    
+    private static void log(String message) {
+        System.out.println(message);
     }
 }
